@@ -1,10 +1,8 @@
 import { getGuestFromLocation } from './invite';
 
-// Set VITE_GOOGLE_APPS_SCRIPT_URL (in .env locally, and in Vercel's Environment Variables)
-// to the Web app URL of google-apps-script/code.gs. The fallback is the previous deployment.
+// Web app URL of google-apps-script/code.gs
 const SCRIPT_URL =
-  import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL ||
-  'https://script.google.com/macros/s/AKfycbz2FIa3ve4AoRTA2WEVZXfUFM_puHYmZ2TlZQbm33QgyyBwPmAfoJsrXFzok5uGWkuD/exec';
+  'https://script.google.com/macros/s/AKfycbxsUwkS_5tF8L27rEoyJKXk5knRfaOGhizK8aOG4QWqxFWqnN9d3gyjpbRxoXLVg2fVzg/exec';
 
 export interface RsvpPayload {
   name: string;
