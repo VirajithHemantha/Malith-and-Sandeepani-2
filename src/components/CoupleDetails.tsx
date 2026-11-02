@@ -38,6 +38,7 @@ export const CoupleDetails: React.FC = () => {
           <div className="mb-4 flex flex-col items-center lg:items-end">
             <span className="text-brand-mocha uppercase tracking-[0.4em] text-[10px] font-bold mb-3 block">The Groom</span>
             <h3 className="text-4xl sm:text-5xl font-display text-brand-mocha mb-2">Malith</h3>
+            <p className="text-brand-gold font-display tracking-[0.3em] uppercase text-xs sm:text-sm mb-3">Roshan Dayananda</p>
             <p className="text-brand-sand/90 font-serif italic text-base sm:text-lg">Son of Mr. T. H. G. Dayananda<br />& Mrs. Nalani Vithanage</p>
           </div>
           <div className="hidden lg:flex justify-end mt-8">
