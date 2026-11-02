@@ -11,6 +11,25 @@ import {
   buildInviteMessage,
 } from '../lib/invite';
 
+function copyWithTextarea(text: string): boolean {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch {
+    ok = false;
+  }
+  document.body.removeChild(textarea);
+  return ok;
+}
+
 export const AdminPage: React.FC = () => {
   const [prefix, setPrefix] = useState<PrefixKey>('mr');
   const [guestName, setGuestName] = useState('');
@@ -27,12 +46,24 @@ export const AdminPage: React.FC = () => {
     setGenerated({ displayName, link, message: buildInviteMessage(displayName, link) });
   };
 
+  // Editing the inputs invalidates the last result, so a stale link is never copied
+  const updatePrefix = (value: PrefixKey) => {
+    setPrefix(value);
+    setGenerated(null);
+  };
+  const updateGuestName = (value: string) => {
+    setGuestName(value);
+    setGenerated(null);
+  };
+
   const copy = async (text: string, successMessage: string) => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success(successMessage);
     } catch {
-      toast.error('Could not copy. Please copy it manually.');
+      // Older iPhones / in-app browsers lack the Clipboard API
+      if (copyWithTextarea(text)) toast.success(successMessage);
+      else toast.error('Could not copy. Please copy it manually.');
     }
   };
 
@@ -66,7 +97,7 @@ export const AdminPage: React.FC = () => {
               <select
                 className={`${fieldClass} cursor-pointer`}
                 value={prefix}
-                onChange={(e) => setPrefix(e.target.value as PrefixKey)}
+                onChange={(e) => updatePrefix(e.target.value as PrefixKey)}
               >
                 {PREFIXES.map((p) => (
                   <option key={p.key} value={p.key}>{p.label}</option>
@@ -80,7 +111,7 @@ export const AdminPage: React.FC = () => {
                 placeholder="e.g. Sanjaya"
                 className={fieldClass}
                 value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
+                onChange={(e) => updateGuestName(e.target.value)}
               />
             </div>
           </div>
