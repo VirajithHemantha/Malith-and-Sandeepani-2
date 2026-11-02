@@ -1,5 +1,5 @@
 /**
- * Malith & Nipunika — Homecoming Invitation
+ * Malith & Nipunika - Homecoming Invitation
  * Google Apps Script backend for RSVP and Wishes.
  *
  * - Creates the "RSVP" and "Wishes" sheets automatically (with styled headers)
@@ -8,13 +8,13 @@
  * - GET ?action=wishes -> returns the latest wishes for the guestbook.
  */
 
-const SPREADSHEET_ID = '1n8XwpnI8sIVL_5nnmzbwoANafO4xd2jI3edo5X54jbA';
+const SPREADSHEET_ID = '1jCiK3wO6IDIDn4eK0DmzlQtAPlWiB7hhwjzJH3gHrLU';
 
 const SHEETS = {
   RSVP: {
     name: 'RSVP',
-    headers: ['Timestamp', 'Full Name', 'Phone', 'Attendance', 'Guests', 'Notes'],
-    widths: [170, 220, 150, 170, 80, 360],
+    headers: ['Timestamp', 'Full Name', 'Phone', 'Attendance', 'Guests', 'Invited As', 'Notes'],
+    widths: [170, 220, 150, 170, 80, 200, 360],
   },
   WISHES: {
     name: 'Wishes',
@@ -71,11 +71,11 @@ function doGet(e) {
 }
 
 /**
- * Optional: run this once from the Apps Script editor to create both
- * sheets right away (otherwise they are created on the first submission).
+ * Run this once from the Apps Script editor to create both sheets right away
+ * (otherwise they are created on the first submission).
  */
 function setupSheets() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = openSpreadsheet_();
   getOrCreateSheet_(ss, SHEETS.RSVP);
   getOrCreateSheet_(ss, SHEETS.WISHES);
 }
@@ -88,13 +88,14 @@ function saveRsvp_(payload) {
   const name = clean_(payload.name || payload.fullName);
   if (!name) throw new Error('Name is required.');
 
-  const sheet = getOrCreateSheet_(SpreadsheetApp.openById(SPREADSHEET_ID), SHEETS.RSVP);
+  const sheet = getOrCreateSheet_(openSpreadsheet_(), SHEETS.RSVP);
   sheet.appendRow([
     new Date(),
     name,
     clean_(payload.phone),
     clean_(payload.attendance),
     clean_(payload.guests),
+    clean_(payload.invitedAs),
     clean_(payload.notes || payload.dietaryNotes),
   ]);
 }
@@ -104,13 +105,12 @@ function saveWish_(payload) {
   const message = clean_(payload.message);
   if (!name || !message) throw new Error('Name and message are required.');
 
-  const sheet = getOrCreateSheet_(SpreadsheetApp.openById(SPREADSHEET_ID), SHEETS.WISHES);
+  const sheet = getOrCreateSheet_(openSpreadsheet_(), SHEETS.WISHES);
   sheet.appendRow([new Date(), name, message]);
 }
 
 function getWishes_() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet_(ss, SHEETS.WISHES);
+  const sheet = getOrCreateSheet_(openSpreadsheet_(), SHEETS.WISHES);
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
 
@@ -133,6 +133,10 @@ function getWishes_() {
 /* ------------------------------------------------------------------ */
 /* Sheet helpers                                                        */
 /* ------------------------------------------------------------------ */
+
+function openSpreadsheet_() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
+}
 
 function getOrCreateSheet_(ss, config) {
   let sheet = ss.getSheetByName(config.name);

@@ -1,4 +1,9 @@
+import { getGuestFromLocation } from './invite';
+
+// Set VITE_GOOGLE_APPS_SCRIPT_URL (in .env locally, and in Vercel's Environment Variables)
+// to the Web app URL of google-apps-script/code.gs. The fallback is the previous deployment.
 const SCRIPT_URL =
+  import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL ||
   'https://script.google.com/macros/s/AKfycbz2FIa3ve4AoRTA2WEVZXfUFM_puHYmZ2TlZQbm33QgyyBwPmAfoJsrXFzok5uGWkuD/exec';
 
 export interface RsvpPayload {
@@ -20,6 +25,15 @@ export interface SheetWish {
   createdAt: string | null;
 }
 
+async function readJson(res: Response) {
+  try {
+    return await res.json();
+  } catch {
+    // Apps Script returns an HTML page when the web app is not deployed for "Anyone"
+    throw new Error('The guest list is not reachable right now. Please try again later.');
+  }
+}
+
 async function post(sheet: 'RSVP' | 'WISHES', data: object): Promise<void> {
   // text/plain keeps this a "simple" request, so the browser skips the CORS preflight
   // that Apps Script cannot answer.
@@ -28,16 +42,17 @@ async function post(sheet: 'RSVP' | 'WISHES', data: object): Promise<void> {
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ sheet, ...data }),
   });
-  const json = await res.json();
+  const json = await readJson(res);
   if (!json.ok) throw new Error(json.error || 'Could not save your response.');
 }
 
-export const submitRsvp = (data: RsvpPayload) => post('RSVP', data);
+// "Invited As" records which personalised link the RSVP came from (e.g. "Mr. Sanjaya")
+export const submitRsvp = (data: RsvpPayload) => post('RSVP', { ...data, invitedAs: getGuestFromLocation() });
 
 export const submitWish = (data: WishPayload) => post('WISHES', data);
 
 export async function fetchWishes(): Promise<SheetWish[]> {
   const res = await fetch(`${SCRIPT_URL}?action=wishes`);
-  const json = await res.json();
+  const json = await readJson(res);
   return json.ok && Array.isArray(json.wishes) ? json.wishes : [];
 }
