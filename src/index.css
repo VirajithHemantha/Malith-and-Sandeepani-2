@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme {
+  /* Red & Black Color Palette (legacy token names kept for compatibility) */
+  --color-brand-beige: #b3121d; /* Red accent */
+  --color-brand-beige-deep: #141111; /* Black */
+  --color-brand-champagne: #faf5f2; /* Soft blush ivory surface */
+  --color-brand-ivory: #fffdfb; /* Page ivory */
+  --color-brand-black: #141111; /* Rich black */
+  --color-brand-gold: #b3121d; /* Primary red accent */
+  --color-brand-gold-light: #d42a35; /* Bright red */
+  --color-brand-crimson: #7a0a12; /* Deep crimson */
+  --color-brand-mocha: #141111; /* Primary text (black) */
+  --color-brand-sand: #6e5856; /* Secondary text (warm grey) */
+
+  --font-serif: "Cormorant Garamond", serif;
+  --font-display: "Cinzel", serif;
+  --font-sans: "Montserrat", sans-serif;
+  --font-playfair: "Playfair Display", serif;
+}
+
+:root {
+  background-color: var(--color-brand-ivory);
+  color: var(--color-brand-mocha);
+  color-scheme: light;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* `clip` hides sideways overflow without turning body into a scroll container,
+   which keeps iOS Safari's native momentum scrolling and fixed elements smooth */
+@supports (overflow: clip) {
+  html, body {
+    overflow-x: clip;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+/* Respect "Reduce Motion" (and iPhone Low Power users who enable it) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-brand-champagne);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-gold);
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-gold-light);
+}
+
+/* Luxury Texture Utility Classes */
+.bg-texture-paper {
+  background-color: var(--color-brand-ivory);
+  background-image:
+    radial-gradient(ellipse at top, rgba(179, 18, 29, 0.05), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(20, 17, 17, 0.03), transparent 60%);
+}
+
+.bg-texture-floral {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c1121f' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-texture-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* Elegant Inner Border */
+.inner-border-gold {
+  position: relative;
+}
+.inner-border-gold::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(179, 18, 29, 0.25);
+  pointer-events: none;
+  z-index: 10;
+}
+.inner-border-gold::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(20, 17, 17, 0.12);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Arch Shape */
+.arch-shape {
+  border-radius: 12rem 12rem 0.5rem 0.5rem;
+}
+
+/* Red foil shimmer for headline names */
+.text-red-foil {
+  background: linear-gradient(110deg, #141111 0%, #7a0a12 30%, #d42a35 50%, #7a0a12 70%, #141111 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* Safari can drop clipped gradient text on inline elements */
+  display: inline-block;
+  padding: 0 0.05em;
+}
